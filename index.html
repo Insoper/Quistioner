@@ -105,6 +105,12 @@
             margin-bottom: 20px;
             text-align: center;
         }
+        .validation-error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -122,11 +128,13 @@
         <div class="form-group">
             <label for="nama">Nama <span class="required">*</span></label>
             <input type="text" id="nama" name="nama" required>
+            <div id="namaError" class="validation-error">Nama harus diisi</div>
         </div>
         
         <div class="form-group">
-            <label for="perusahaan">Perusahaan</label>
-            <input type="text" id="perusahaan" name="perusahaan">
+            <label for="perusahaan">Perusahaan <span class="required">*</span></label>
+            <input type="text" id="perusahaan" name="perusahaan" required>
+            <div id="perusahaanError" class="validation-error">Perusahaan harus diisi</div>
         </div>
         
         <div class="form-group">
@@ -137,6 +145,7 @@
         <div class="form-group">
             <label for="pertanyaan">Pertanyaan <span class="required">*</span></label>
             <textarea id="pertanyaan" name="pertanyaan" required></textarea>
+            <div id="pertanyaanError" class="validation-error">Pertanyaan harus diisi</div>
         </div>
         
         <div id="loading" class="loading">
@@ -151,6 +160,40 @@
         document.getElementById('pertanyaanForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            // Validasi form sebelum submit
+            let isValid = true;
+            
+            // Validasi Nama
+            const nama = document.getElementById('nama').value.trim();
+            if (!nama) {
+                document.getElementById('namaError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('namaError').style.display = 'none';
+            }
+            
+            // Validasi Perusahaan (now required)
+            const perusahaan = document.getElementById('perusahaan').value.trim();
+            if (!perusahaan) {
+                document.getElementById('perusahaanError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('perusahaanError').style.display = 'none';
+            }
+            
+            // Validasi Pertanyaan
+            const pertanyaan = document.getElementById('pertanyaan').value.trim();
+            if (!pertanyaan) {
+                document.getElementById('pertanyaanError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('pertanyaanError').style.display = 'none';
+            }
+            
+            if (!isValid) {
+                return; // Stop submission if validation fails
+            }
+            
             // Tampilkan loading, sembunyikan tombol submit
             document.getElementById('loading').style.display = 'block';
             document.getElementById('submitBtn').style.display = 'none';
@@ -161,10 +204,10 @@
             
             // Kumpulkan data form
             const formData = {
-                nama: document.getElementById('nama').value,
-                perusahaan: document.getElementById('perusahaan').value,
-                lokasi: document.getElementById('lokasi').value,
-                pertanyaan: document.getElementById('pertanyaan').value
+                nama: nama,
+                perusahaan: perusahaan,
+                lokasi: document.getElementById('lokasi').value.trim(),
+                pertanyaan: pertanyaan
             };
             
             try {
@@ -193,9 +236,28 @@
                 document.getElementById('submitBtn').style.display = 'block';
             }
         });
+
+        // Add input event listeners to hide error messages when user starts typing
+        document.getElementById('nama').addEventListener('input', function() {
+            if (this.value.trim()) {
+                document.getElementById('namaError').style.display = 'none';
+            }
+        });
+        
+        document.getElementById('perusahaan').addEventListener('input', function() {
+            if (this.value.trim()) {
+                document.getElementById('perusahaanError').style.display = 'none';
+            }
+        });
+        
+        document.getElementById('pertanyaan').addEventListener('input', function() {
+            if (this.value.trim()) {
+                document.getElementById('pertanyaanError').style.display = 'none';
+            }
+        });
     </script>
 
-<script>
+    <script>
         // Register Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -208,8 +270,6 @@
                     });
             });
         }
-
-        // [Keep your existing form submission script]
     </script>
 </body>
 </html>
