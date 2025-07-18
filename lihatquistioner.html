@@ -49,6 +49,12 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            flex-grow: 1;
+        }
+        
+        .search-group {
+            flex-grow: 1;
+            min-width: 0;
         }
         
         label {
@@ -93,7 +99,8 @@
             border-radius: 4px;
             border: 1px solid #ddd;
             font-size: 14px;
-            min-width: 200px;
+            width: 100%;
+            box-sizing: border-box;
         }
         
         table {
@@ -125,12 +132,12 @@
         
         .status-badge {
             display: inline-block;
-            padding: 5px 10px;
+            padding: 5px 8px;
             border-radius: 4px;
             font-size: 12px;
             font-weight: bold;
             text-transform: uppercase;
-            min-width: 110px;
+            min-width: 80px;
             text-align: center;
         }
         
@@ -157,8 +164,8 @@
 
         .actions button {
             white-space: nowrap;
-            padding: 6px 12px;
-            font-size: 13px;
+            padding: 6px 8px;
+            font-size: 12px;
         }
 
         td {
@@ -220,6 +227,10 @@
                 width: 100%;
             }
             
+            .search-group {
+                width: 100%;
+            }
+            
             .filter-group label {
                 margin-bottom: 0;
             }
@@ -244,22 +255,29 @@
             }
             
             .status-badge {
-                min-width: 90px;
-                font-size: 11px;
-                padding: 4px 6px;
+                min-width: 70px;
+                font-size: 10px;
+                padding: 3px 5px;
             }
             
             .actions {
                 flex-direction: column;
-                gap: 6px;
+                gap: 5px;
             }
             
             .actions button {
                 width: 100%;
+                padding: 4px 6px;
+                font-size: 11px;
             }
             
             .pertanyaan-cell {
-                max-width: 150px;
+                max-width: 200px;
+            }
+            
+            /* Penyesuaian khusus untuk kolom pencarian */
+            .search-group input {
+                max-width: 200px; /* Lebar maksimal untuk kolom pencarian */
             }
         }
     </style>
@@ -277,7 +295,7 @@
             </select>
         </div>
         
-        <div class="filter-group">
+        <div class="filter-group search-group">
             <input type="text" id="search" placeholder="Cari perusahaan..." oninput="filterData()">
             <button onclick="refreshData()">Refresh Data</button>
         </div>
