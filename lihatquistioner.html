@@ -2,15 +2,15 @@
 <html lang="id">
 <head>
     <!-- Manifest -->
-<link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="/manifest.json">
 
-<!-- iOS support -->
-<link rel="apple-touch-icon" href="/icons/icon-192x192.png">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-capable" content="yes">
+    <!-- iOS support -->
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-capable" content="yes">
 
-<!-- Theme Color -->
-<meta name="theme-color" content="#4285F4">
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#4285F4">
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -147,23 +147,29 @@
         }
         
         .actions {
-    display: flex;
-    gap: 8px;
-    flex-wrap: nowrap;
-    justify-content: center;
-    align-items: center;
-    min-height: 100%;
-}
+            display: flex;
+            gap: 8px;
+            flex-wrap: nowrap;
+            justify-content: center;
+            align-items: center;
+            min-height: 100%;
+        }
 
-.actions button {
-    white-space: nowrap;
-    padding: 6px 12px;
-    font-size: 13px;
-}
+        .actions button {
+            white-space: nowrap;
+            padding: 6px 12px;
+            font-size: 13px;
+        }
 
-td {
-    vertical-align: middle;
-}
+        td {
+            vertical-align: middle;
+        }
+        
+        .pertanyaan-cell {
+            max-width: 300px;
+            word-wrap: break-word;
+            white-space: normal;
+        }
         
         .loading {
             text-align: center;
@@ -192,8 +198,39 @@ td {
         }
         
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 20px;
+                margin-bottom: 20px;
+            }
+            
             .controls {
                 flex-direction: column;
+                padding: 10px;
+                gap: 10px;
+            }
+            
+            .filter-group {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+                width: 100%;
+            }
+            
+            .filter-group label {
+                margin-bottom: 0;
+            }
+            
+            select, input {
+                width: 100%;
+                min-width: auto;
+            }
+            
+            button {
+                width: 100%;
             }
             
             table {
@@ -210,6 +247,19 @@ td {
                 min-width: 90px;
                 font-size: 11px;
                 padding: 4px 6px;
+            }
+            
+            .actions {
+                flex-direction: column;
+                gap: 6px;
+            }
+            
+            .actions button {
+                width: 100%;
+            }
+            
+            .pertanyaan-cell {
+                max-width: 150px;
             }
         }
     </style>
@@ -293,7 +343,7 @@ td {
         }
         
         // Fungsi untuk menampilkan data
-         function displayData() {
+        function displayData() {
             const container = document.getElementById('data-container');
             
             if (filteredData.length === 0) {
@@ -326,13 +376,13 @@ td {
                         <td>${escapeHtml(item.nama)}</td>
                         <td>${escapeHtml(item.perusahaan || '-')}</td>
                         <td>${escapeHtml(item.lokasi || '-')}</td>
-                        <td>${escapeHtml(item.pertanyaan)}</td>
+                        <td class="pertanyaan-cell">${escapeHtml(item.pertanyaan)}</td>
                         <td>
                             <span class="status-badge ${item.status === 'read' ? 'read' : 'unread'}">
                                 ${item.status === 'read' ? 'SUDAH DIBACA' : 'BELUM DIBACA'}
                             </span>
                         </td>
-                        <td style="vertical-align: middle;">
+                        <td>
                             <div class="actions">
                                 <button onclick="toggleStatus(${item.id})" class="${item.status === 'read' ? 'secondary' : ''}">
                                     ${item.status === 'read' ? 'Belum Dibaca' : 'Sudah Dibaca'}
@@ -347,7 +397,6 @@ td {
             html += `</tbody></table>`;
             container.innerHTML = html;
         }
-
         
         // Fungsi untuk update total count
         function updateTotalCount() {
@@ -437,19 +486,18 @@ td {
         }
     </script>
 
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
-        .then(registration => {
-          console.log('ServiceWorker registration successful');
-        })
-        .catch(err => {
-          console.log('ServiceWorker registration failed: ', err);
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then(registration => {
+              console.log('ServiceWorker registration successful');
+            })
+            .catch(err => {
+              console.log('ServiceWorker registration failed: ', err);
+            });
         });
-    });
-  }
-</script>
-
+      }
+    </script>
 </body>
 </html>
