@@ -1,11 +1,11 @@
 {
-  "name": "Form Pertanyaan",
-  "short_name": "QuestionForm",
-  "description": "Aplikasi Formulir Pertanyaan Peserta/Customer",
-  "start_url": "/Questioner.html",
+  "name": "Manajemen Pertanyaan",
+  "short_name": "QuestionManager",
+  "description": "Aplikasi Manajemen Pertanyaan Peserta/Customer",
+  "start_url": "/lihatquistioner.html",
   "display": "standalone",
-  "background_color": "#f9f9f9",
-  "theme_color": "#3498db",
+  "background_color": "#ffffff",
+  "theme_color": "#4285F4",
   "orientation": "portrait",
   "icons": [
     {
@@ -36,7 +36,8 @@
     {
       "src": "icons/icon-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "icons/icon-384x384.png",
@@ -48,5 +49,6 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-  ]
+  ],
+  "scope": "/"
 }
