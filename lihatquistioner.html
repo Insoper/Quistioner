@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <!-- Manifest -->
+<link rel="manifest" href="/manifest.json">
+
+<!-- iOS support -->
+<link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+<!-- Theme Color -->
+<meta name="theme-color" content="#4285F4">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List Pertanyaan</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        h1 {
+            color: #4285F4;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        label {
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        
+        button {
+            background-color: #4285F4;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+        }
+        
+        button:hover {
+            background-color: #3367D6;
+        }
+        
+        button.danger {
+            background-color: #EA4335;
+        }
+        
+        button.danger:hover {
+            background-color: #D33426;
+        }
+        
+        button.secondary {
+            background-color: #34A853;
+        }
+        
+        button.secondary:hover {
+            background-color: #2D9248;
+        }
+        
+        select, input {
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            min-width: 200px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        th {
+            background-color: #4285F4;
+            color: white;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            min-width: 110px;
+            text-align: center;
+        }
+        
+        .status-badge.unread {
+            background-color: #FFEBEE;
+            color: #D33426;
+            border: 1px solid #D33426;
+        }
+        
+        .status-badge.read {
+            background-color: #E8F5E9;
+            color: #2D9248;
+            border: 1px solid #2D9248;
+        }
+        
+        .actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    min-height: 100%;
+}
+
+.actions button {
+    white-space: nowrap;
+    padding: 6px 12px;
+    font-size: 13px;
+}
+
+td {
+    vertical-align: middle;
+}
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            font-size: 16px;
+            color: #666;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        
+        .error {
+            color: #EA4335;
+            padding: 12px 15px;
+            background-color: #FFEBEE;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .total-count {
+            text-align: right;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
+                font-size: 13px;
+            }
+            
+            th, td {
+                padding: 8px 10px;
+            }
+            
+            .status-badge {
+                min-width: 90px;
+                font-size: 11px;
+                padding: 4px 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Manajemen Pertanyaan - List View</h1>
+    
+    <div class="controls">
+        <div class="filter-group">
+            <label for="filter-status">Filter Status:</label>
+            <select id="filter-status" onchange="filterData()">
+                <option value="all">Semua</option>
+                <option value="unread">Belum Dibaca</option>
+                <option value="read">Sudah Dibaca</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <input type="text" id="search" placeholder="Cari perusahaan..." oninput="filterData()">
+            <button onclick="refreshData()">Refresh Data</button>
+        </div>
+    </div>
+    
+    <div id="error-message" class="error" style="display: none;"></div>
+    
+    <div id="data-container">
+        <div class="loading">Memuat data...</div>
+    </div>
+    
+    <div id="total-count" class="total-count"></div>
+    
+    <script>
+        // URL GAS Anda
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzcXyercGLZHvz8IOXtrKbOnW5tSO0w5JKxJ6npivZbMxvRbYEusHvjghh6MOMheRHk9Q/exec';
+        
+        // Variabel untuk menyimpan data
+        let allData = [];
+        let filteredData = [];
+        
+        // Fungsi utama saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+        });
+        
+        // Fungsi untuk memuat data dari GAS
+        async function loadData() {
+            showLoading();
+            hideError();
+            
+            try {
+                const response = await fetch(`${SCRIPT_URL}?action=getData`);
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    allData = result.data;
+                    filterData();
+                } else {
+                    showError(result.message || 'Gagal memuat data');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Terjadi kesalahan saat memuat data');
+            }
+        }
+        
+        // Fungsi untuk memfilter data
+        function filterData() {
+            const statusFilter = document.getElementById('filter-status').value;
+            const searchTerm = document.getElementById('search').value.toLowerCase();
+            
+            filteredData = allData.filter(item => {
+                const statusMatch = statusFilter === 'all' || item.status === statusFilter;
+                const searchMatch = !searchTerm || 
+                                 (item.perusahaan && item.perusahaan.toLowerCase().includes(searchTerm));
+                
+                return statusMatch && searchMatch;
+            });
+            
+            displayData();
+            updateTotalCount();
+        }
+        
+        // Fungsi untuk menampilkan data
+         function displayData() {
+            const container = document.getElementById('data-container');
+            
+            if (filteredData.length === 0) {
+                container.innerHTML = '<div class="loading">Tidak ada data yang ditemukan</div>';
+                return;
+            }
+            
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Tanggal</th>
+                            <th>Nama</th>
+                            <th>Perusahaan</th>
+                            <th>Lokasi</th>
+                            <th>Pertanyaan</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            filteredData.forEach((item, index) => {
+                html += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${formatDate(item.timestamp)}</td>
+                        <td>${escapeHtml(item.nama)}</td>
+                        <td>${escapeHtml(item.perusahaan || '-')}</td>
+                        <td>${escapeHtml(item.lokasi || '-')}</td>
+                        <td>${escapeHtml(item.pertanyaan)}</td>
+                        <td>
+                            <span class="status-badge ${item.status === 'read' ? 'read' : 'unread'}">
+                                ${item.status === 'read' ? 'SUDAH DIBACA' : 'BELUM DIBACA'}
+                            </span>
+                        </td>
+                        <td style="vertical-align: middle;">
+                            <div class="actions">
+                                <button onclick="toggleStatus(${item.id})" class="${item.status === 'read' ? 'secondary' : ''}">
+                                    ${item.status === 'read' ? 'Belum Dibaca' : 'Sudah Dibaca'}
+                                </button>
+                                <button onclick="deleteData(${item.id})" class="danger">Hapus</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += `</tbody></table>`;
+            container.innerHTML = html;
+        }
+
+        
+        // Fungsi untuk update total count
+        function updateTotalCount() {
+            document.getElementById('total-count').textContent = `Total: ${filteredData.length} data ditemukan`;
+        }
+        
+        // Fungsi untuk mengubah status
+        async function toggleStatus(id) {
+            try {
+                const response = await fetch(`${SCRIPT_URL}?action=toggleStatus&id=${id}`);
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    loadData(); // Muat ulang data setelah perubahan
+                } else {
+                    showError(result.message || 'Gagal mengubah status');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Terjadi kesalahan saat mengubah status');
+            }
+        }
+        
+        // Fungsi untuk menghapus data
+        async function deleteData(id) {
+            if (!confirm('Apakah Anda yakin ingin menghapus data ini?')) return;
+            
+            try {
+                const response = await fetch(`${SCRIPT_URL}?action=deleteData&id=${id}`);
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    loadData(); // Muat ulang data setelah penghapusan
+                } else {
+                    showError(result.message || 'Gagal menghapus data');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Terjadi kesalahan saat menghapus data');
+            }
+        }
+        
+        // Fungsi untuk refresh data
+        function refreshData() {
+            loadData();
+        }
+        
+        // Fungsi bantu untuk menampilkan loading
+        function showLoading() {
+            const container = document.getElementById('data-container');
+            container.innerHTML = '<div class="loading">Memuat data...</div>';
+        }
+        
+        // Fungsi bantu untuk menampilkan error
+        function showError(message) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+        
+        // Fungsi bantu untuk menyembunyikan error
+        function hideError() {
+            document.getElementById('error-message').style.display = 'none';
+        }
+        
+        // Fungsi bantu untuk format tanggal
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleString('id-ID', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        
+        // Fungsi bantu untuk escape HTML (mencegah XSS)
+        function escapeHtml(unsafe) {
+            if (!unsafe) return '';
+            return unsafe.toString()
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(registration => {
+          console.log('ServiceWorker registration successful');
+        })
+        .catch(err => {
+          console.log('ServiceWorker registration failed: ', err);
+        });
+    });
+  }
+</script>
+
+</body>
+</html>
